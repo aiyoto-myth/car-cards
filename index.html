@@ -1085,7 +1085,7 @@ if(GC_CODE){ var gs = document.createElement('script'); gs.async = true; gs.src 
   if(q.get('bought') === '1') track('bought-return');
   /* measurement check from a real browser: ?via=selftest&fire=all sends every funnel event once, only as "<event>.selftest",
      so the plain counts stay clean (GoatCounter drops hits from our server's IP, so this is run on the laptop) */
-  if(via === 'selftest' && q.get('fire') === 'all'){ Object.keys(FUNNEL_EV).forEach(function(n, i){ setTimeout(function(){ track(n + '.selftest', 1); }, 300 * i); }); track('gift-selftest'); }
+  if(via === 'selftest' && q.get('fire') === 'all'){ Object.keys(FUNNEL_EV).forEach(function(n, i){ setTimeout(function(){ track(n + '.selftest', 1); }, 4000 + 1500 * i); }); setTimeout(function(){ track('gift-selftest'); }, 2500); }   /* spaced out: GoatCounter dropped a burst of 5+ hits within a second (11-24 test) */
   if(q.get('bought') === '1' && !isPro()){
     setTimeout(function(){ $('proSec').scrollIntoView(); var n = $('licNote'), k = $('licKey'); if(n) n.textContent = 'Thanks! Enter the email you just used on Whop and press Unlock Pro.'; if(k) k.focus(); }, 300);
   }
