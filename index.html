@@ -1,0 +1,1095 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Car Card Press · print model railroad car cards and waybills</title>
+<meta name="description" content="Type or paste your freight car roster once, then print car cards and 4-cycle waybills on plain paper. Photos on the cards, cut and fold lines, Letter or A4. Free, works in the browser, no sign-up.">
+<link rel="canonical" href="https://samsbench.com/car-cards/">
+<meta property="og:title" content="Car Card Press: car cards and 4-cycle waybills from your roster">
+<meta property="og:description" content="Paste your roster, print car cards and waybills on plain paper. Free, no sign-up.">
+<meta property="og:url" content="https://samsbench.com/car-cards/">
+<meta property="og:image" content="https://samsbench.com/car-cards/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;700&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --desk:#e9dcbc;      /* manila card stock */
+  --desk2:#dfcfa8;
+  --paper:#fffdf6;
+  --ink:#1d1a15;
+  --red:#a8321d;       /* rubber stamp */
+  --red-ink:#ffffff;
+  --rail:#24434a;      /* slate */
+  --line:#8a7a58;
+  --ok:#2e6a3a;
+  --warn:#8a5a00;
+  --head:'Oswald', 'Arial Narrow', sans-serif;
+  --type:'Courier Prime', 'Courier New', monospace;
+  --ui: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--desk);color:var(--ink);font:16px/1.45 var(--ui)}
+a{color:var(--rail)}
+button,input,select,textarea{font:inherit;color:inherit}
+h1,h2,h3{font-family:var(--head);font-weight:700;letter-spacing:.01em;line-height:1.1;margin:0}
+.wrap{max-width:1180px;margin:0 auto;padding:0 16px}
+
+/* top */
+.top{background:var(--rail);color:#fff;border-bottom:6px solid var(--red)}
+.top .wrap{display:flex;align-items:center;gap:14px;padding-top:12px;padding-bottom:12px;flex-wrap:wrap}
+.logo{font-family:var(--head);font-size:22px;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
+.logo{display:flex;align-items:center;gap:10px}
+.logo svg{flex:none}
+.top .tag{font-size:15px;color:#fff}
+.top .pro-pill{margin-left:auto;font-family:var(--head);font-size:15px;letter-spacing:.05em;background:#fff;color:var(--rail);padding:9px 14px;text-decoration:none;text-transform:uppercase}
+
+/* hero */
+.hero{display:grid;grid-template-columns:1.05fr 1fr;gap:28px;align-items:center;padding:28px 0 18px}
+.hero h1{font-size:44px;text-transform:uppercase}
+.hero p{font-size:18px;margin:12px 0 0;max-width:34em}
+.hero .acts{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.rack{position:relative;min-height:330px;overflow:hidden}
+.rack .cc,.rack .wbf{position:absolute;box-shadow:0 6px 16px rgba(40,30,10,.28)}
+
+.btn{display:inline-flex;align-items:center;gap:8px;border:2px solid var(--ink);background:var(--paper);padding:9px 14px;cursor:pointer;font-family:var(--head);font-size:16px;letter-spacing:.04em;text-transform:uppercase;text-decoration:none;color:var(--ink)}
+.btn:hover{background:#fff}
+.btn.go{background:var(--red);border-color:var(--red);color:var(--red-ink)}
+.btn.go:hover{background:#8f2915}
+.btn.small{padding:5px 9px;font-size:14px}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.lnk{background:none;border:0;padding:6px 0;color:var(--rail);text-decoration:underline;cursor:pointer;font:inherit}
+
+/* steps */
+.steps{display:flex;gap:0;margin:8px 0 0;position:sticky;top:0;z-index:5;background:var(--desk);padding:8px 0;border-bottom:2px solid var(--ink)}
+.steps button{flex:1;border:0;background:none;padding:8px 6px;font-family:var(--head);font-size:17px;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;color:var(--ink);border-bottom:5px solid transparent}
+.steps button .n{display:inline-block;background:var(--ink);color:var(--desk);width:22px;height:22px;line-height:22px;text-align:center;margin-right:6px;font-size:14px}
+.steps button[aria-selected="true"]{border-bottom-color:var(--red)}
+.steps button .c{font-family:var(--type);font-size:14px;margin-left:4px}
+
+section.pane{padding:18px 0 40px}
+section.pane[hidden]{display:none}
+.pane h2{font-size:28px;text-transform:uppercase}
+.pane .lead{margin:6px 0 14px;max-width:46em}
+
+.sheet-ui{background:var(--paper);border:2px solid var(--ink);padding:14px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.grow{flex:1}
+
+/* roster table */
+table.ros{width:100%;border-collapse:collapse;font-size:15px}
+table.ros th{font-family:var(--head);font-weight:500;text-transform:uppercase;letter-spacing:.04em;text-align:left;border-bottom:2px solid var(--ink);padding:6px 6px;font-size:14px;white-space:nowrap}
+table.ros td{border-bottom:1px solid #cdbf9c;padding:4px 4px;vertical-align:middle}
+table.ros input[type=text]{width:100%;border:1px solid transparent;background:transparent;padding:5px 6px;min-width:0}
+table.ros input[type=text]:hover{border-color:#cdbf9c}
+table.ros input[type=text]:focus{border-color:var(--ink);background:#fff;outline:none}
+table.ros .mk input{font-family:var(--type);font-weight:700;text-transform:uppercase}
+.ph{width:64px;height:48px;border:1px dashed var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;background:#f3ead4;position:relative;font-size:12px;font-weight:600;text-align:center;line-height:1.1}
+.ph img{position:absolute;inset:0}
+.ph img{width:100%;height:100%;object-fit:cover}
+.x{border:0;background:none;cursor:pointer;font-size:22px;line-height:1;min-width:40px;min-height:40px;color:var(--ink)}
+.x:hover{color:var(--red)}
+.empty{padding:22px;text-align:center;border:2px dashed var(--line);background:#f6eedb}
+.note{font-size:14px;margin-top:8px}
+.warnbox{background:#fff1cf;border-left:5px solid var(--warn);padding:8px 12px;margin:10px 0;font-size:15px}
+.okbox{background:#e5f1e2;border-left:5px solid var(--ok);padding:8px 12px;margin:10px 0;font-size:15px}
+textarea{width:100%;min-height:120px;border:2px solid var(--ink);padding:8px;font-family:var(--type);font-size:14px;background:#fff}
+details.paste{margin:12px 0}
+details.paste summary{cursor:pointer;font-family:var(--head);text-transform:uppercase;letter-spacing:.04em;font-size:16px}
+label.fld{display:flex;flex-direction:column;gap:3px;font-size:14px;font-weight:600}
+label.fld input,label.fld select{border:2px solid var(--ink);padding:7px 8px;background:#fff;font-weight:400;font-size:15px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.ml{display:none;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
+label.mini{display:flex;flex-direction:column;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;gap:1px}
+.wbi .need{color:var(--red);font-size:13px;font-weight:700;margin-top:2px}
+label.fld select{max-width:100%}
+.chip{font-family:var(--type);font-size:13px;border:1px solid var(--ink);padding:1px 6px;background:#fff}
+
+/* waybill list */
+.wbl{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.wbi{background:#fff;border:2px solid var(--ink);padding:10px}
+.wbi h3{font-size:17px;display:flex;align-items:center;gap:8px}
+.wbi .cy{display:grid;grid-template-columns:22px 1fr;gap:4px 6px;margin-top:6px;font-size:14px}
+.wbi .cy .k{font-family:var(--head);background:var(--ink);color:#fff;text-align:center;height:22px;line-height:22px}
+.wbi .cy select,.wbi .cy input{width:100%;border:1px solid #bba;padding:6px 6px;font-size:15px;background:#fff;min-height:36px}
+.wbi .cy .two{display:grid;grid-template-columns:80px 1fr;gap:4px}
+
+/* print preview */
+.pv-wrap{overflow:hidden;border:2px solid var(--ink);background:#7c7059;padding:14px}
+.pv-scale{transform-origin:0 0}
+.pv-wrap .sheet{background:#fff;box-shadow:0 4px 14px rgba(0,0,0,.35);margin:0 0 14px}
+
+/* ===== printed things (inches) ===== */
+.sheet{position:relative;overflow:hidden;color:#000;font-family:var(--type)}
+.sheet .grid{position:absolute;display:grid;gap:0}
+.sheet .foot{position:absolute;left:.3in;right:.3in;bottom:.32in;height:.3in;display:flex;align-items:center;gap:.15in;font:7.5pt/1.2 var(--ui);color:#000}
+.sheet .foot .ruler{width:1in;height:.12in;border:1px solid #000;border-top:0;position:relative;flex:none}
+.sheet .foot .ruler::after{content:"";position:absolute;left:50%;bottom:0;height:.06in;border-left:1px solid #000}
+.sheet .foot .how{flex:1}
+.sheet .foot .cr{text-align:right;white-space:nowrap}
+
+.cc{position:relative;background:#fff;color:#000;font-family:var(--type);outline:.6pt solid #9a9a9a;outline-offset:-.3pt;overflow:hidden}
+.cc .pnl{position:absolute;left:0;right:0;top:0;padding:.1in .12in;overflow:hidden}
+.cc .flp{position:absolute;left:0;right:0;bottom:0;border-top:1pt dashed #000;overflow:hidden}
+.cc .flp .in{position:absolute;inset:0;padding:.07in .1in;transform:rotate(180deg);display:flex;gap:.08in}
+.cc.flat .flp{border-top:1pt solid #000}
+.cc.flat .flp .in{transform:none}
+.cc .rr{font:700 6.5pt/1 var(--ui);letter-spacing:.06em;text-transform:uppercase;border-bottom:1pt solid #000;padding-bottom:2pt;margin-bottom:4pt;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cc .big{font-weight:700;font-size:15pt;line-height:1;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cc .kind{font-size:8.5pt;line-height:1.15;margin-top:2pt}
+.cc .ret{font-size:7pt;line-height:1.15;margin-top:3pt;border-top:.6pt solid #000;padding-top:2pt}
+.cc .ret b{font-size:9.5pt}
+.cc.sz-s .flp .kind{display:none}
+.cc .pnl .photo{margin-top:6pt;border:.6pt solid #000;height:1.15in;background:#eee center/cover no-repeat}
+.cc .pnl .nt{font-size:7.5pt;margin-top:4pt}
+.cc .pnl .rev{position:absolute;left:.12in;right:.12in;bottom:.06in;font:6pt/1.2 var(--ui)}
+.cc .flp .tx{flex:1;min-width:0;overflow:hidden}
+.cc .flp .tn{width:.7in;flex:none;border:.6pt solid #000;background:#eee center/cover no-repeat}
+.cc .hasTn .big{font-size:12pt}
+.cc.flat .face{position:absolute;inset:0;padding:.1in .12in;display:flex;flex-direction:column}
+.cc.flat .face .photo{flex:1;margin-top:6pt;border:.6pt solid #000;background:#eee center/cover no-repeat;min-height:.4in}
+.cc.flat .face .nt{font-size:7.5pt;margin-top:4pt}
+.cc .foldlbl{position:absolute;right:.06in;font:6pt/1 var(--ui);background:#fff;padding:0 2pt;transform:translateY(-50%)}
+
+.wbf{position:relative;background:#fff;color:#000;font-family:var(--type);outline:.6pt solid #9a9a9a;outline-offset:-.3pt;overflow:hidden}
+.wbf .p{position:absolute;left:0;right:0;overflow:hidden}
+.wbf .p.r .in{transform:rotate(180deg)}
+.wbf .p .in{position:absolute;inset:0;padding:.06in .08in;display:flex;flex-direction:column}
+.wbf .p + .p{border-top:.5pt solid #bbb}
+.wbf .p.fold{border-top:1pt dashed #000}
+.wbf .hd{display:flex;align-items:center;gap:5pt;white-space:nowrap;overflow:hidden;font:700 6.5pt/1 var(--ui);letter-spacing:.05em;text-transform:uppercase;border-bottom:.8pt solid #000;padding-bottom:2pt}
+.wbf .hd .num{font:700 12pt/1 var(--head);border:1pt solid #000;padding:0 4pt;letter-spacing:0}
+.wbf .hd .ty{margin-left:auto;font-family:var(--type);font-size:7pt;letter-spacing:0}
+.wbf .ln{font-size:8.5pt;line-height:1.15;margin-top:2pt;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-left:.46in;position:relative}
+.wbf .ln .lb{position:absolute;left:0;top:.15em;width:.44in;font:700 6.5pt/1 var(--ui);letter-spacing:.04em}
+.wbf .ln.to{white-space:normal;max-height:3.45em;font-weight:700;font-size:10pt;line-height:1.15}
+.wbf .ln.nolb{padding-left:0}
+.wbf .lbl{font:700 6.5pt/1 var(--ui);letter-spacing:.04em;margin-top:3pt}
+.wbf .mty{margin-top:3pt;font-weight:700;font-size:11pt;line-height:1.1}
+.wbf .off{font:600 5.5pt/1 var(--ui);letter-spacing:.03em}
+
+/* pro */
+.pro{background:var(--rail);color:#fff;padding:22px;border:2px solid var(--ink);margin-top:26px}
+.pro h2{font-size:26px;text-transform:uppercase}
+.pro ul{margin:10px 0 14px;padding-left:20px}
+.pro .btn{border-color:#fff}
+.pro input{border:2px solid #fff;padding:8px;background:#fff;color:var(--ink);min-width:240px}
+.pro .msg{margin-top:8px;font-weight:600}
+.lock{display:inline-block;font-family:var(--head);font-size:12px;letter-spacing:.05em;background:var(--rail);color:#fff;padding:1px 6px;text-transform:uppercase;vertical-align:middle}
+
+footer.site{border-top:2px solid var(--ink);padding:18px 0 40px;font-size:14px}
+
+.savebar{position:sticky;top:52px;z-index:6;background:#fff1cf;border:2px solid var(--warn);padding:8px 12px;font-size:15px;margin:8px 0}
+.savebar[hidden]{display:none}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;font-size:15px;z-index:50;max-width:90vw}
+.toast[hidden]{display:none}
+
+@media (max-width:860px){
+  .hero{grid-template-columns:1fr}
+  .hero h1{font-size:30px}
+  .ph{width:56px;height:56px}
+  .rack{min-height:300px}
+  .steps button{font-size:13px;padding:6px 2px;display:flex;flex-direction:column;align-items:center;gap:3px}
+  .steps button .n{margin:0}
+  .toast{top:12px;bottom:auto}
+  .steps button .c{display:none}
+  table.ros thead{display:none}
+  table.ros tr{display:grid;grid-template-columns:64px 1fr 1fr 36px;gap:2px 6px;border-bottom:2px solid #cdbf9c;padding:6px 0}
+  table.ros td{border:0;padding:0}
+  table.ros td.phc{grid-row:span 3}
+  table.ros td.del{grid-column:4;grid-row:1}
+  table.ros td.wide{grid-column:2 / 4}
+  table.ros input[type=text]{border-color:#e0d4b6}
+  .ml{display:block;padding:0 2px}
+  .sheet-ui .row > label.fld{flex:1 1 100%}
+}
+
+/* printing: only the sheets */
+#printArea{display:none}
+@media print{
+  body{background:#fff}
+  body > *:not(#printArea){display:none !important}
+  #printArea{display:block}
+  #printArea .sheet{break-after:page;page-break-after:always;margin:0}
+  #printArea .sheet:last-child{break-after:auto;page-break-after:auto}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+<style id="pageSize">@page{size:letter;margin:0}</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <div class="logo"><svg width="22" height="30" viewBox="0 0 22 30" aria-hidden="true"><rect x="1" y="1" width="20" height="28" fill="#fff"/><rect x="1" y="17" width="20" height="12" fill="#e9dcbc" stroke="#fff"/><rect x="4" y="4" width="14" height="3" fill="#24434a"/><rect x="4" y="9" width="9" height="2" fill="#24434a"/><rect x="4" y="21" width="14" height="2" fill="#a8321d"/></svg>Car Card Press</div>
+    <div class="tag">Car cards and 4-cycle waybills for operating sessions</div>
+    <a class="pro-pill" href="#proSec" id="proPill">Pro</a>
+  </div>
+</header>
+
+<main class="wrap" id="app">
+  <div class="hero">
+    <div>
+      <h1>Your roster in, car cards out.</h1>
+      <p>Type or paste your freight cars once. Print car cards with a fold-over pocket and 4-cycle waybills on plain paper or card stock, with cut lines. Add a photo of each car from your phone.</p>
+      <p style="font-size:16px">Free. Runs in your browser. No sign-up, nothing to install.</p>
+      <div class="acts">
+        <button class="btn go" data-go="cars">Start my roster</button>
+        <button class="btn" id="exBtn">Load an example railroad</button>
+      </div>
+    </div>
+    <div class="rack" id="rack" aria-label="Sample car card and waybill"></div>
+  </div>
+
+  <div class="savebar" id="saveBar" hidden>This browser is out of room, so your last changes are not saved. <button class="lnk" id="saveBarBackup">Save a backup file now</button>, then remove a few photos.</div>
+  <nav class="steps" role="tablist">
+    <button role="tab" data-tab="cars" aria-selected="true"><span class="n">1</span>Cars<span class="c" id="cntCars"></span></button>
+    <button role="tab" data-tab="places" aria-selected="false"><span class="n">2</span>Places<span class="c" id="cntPlaces"></span></button>
+    <button role="tab" data-tab="bills" aria-selected="false"><span class="n">3</span>Waybills<span class="c" id="cntBills"></span></button>
+    <button role="tab" data-tab="print" aria-selected="false"><span class="n">4</span>Print</button>
+  </nav>
+
+  <!-- 1 CARS -->
+  <section class="pane" id="pane-cars">
+    <h2>Freight cars</h2>
+    <p class="lead">One row per car. The type code (XM, RS, TM…) is what waybills match on. "Return empty to" is printed on the card.</p>
+    <div class="sheet-ui">
+      <div class="row" style="margin-bottom:10px">
+        <label class="fld grow" style="max-width:340px">Railroad name (top of every card and waybill)
+          <input type="text" id="rrName" placeholder="e.g. Mill Creek Branch" maxlength="48">
+        </label>
+      </div>
+      <div id="carTable"></div>
+      <div class="row" style="margin-top:10px">
+        <button class="btn" id="addCar">+ Add a car</button>
+        <span class="note" id="carNote"></span>
+      </div>
+      <details class="paste" id="pasteBox">
+        <summary>Paste from a spreadsheet</summary>
+        <p class="note">Copy the rows from Excel, Google Sheets or a JMRI car export and paste them here. A header row helps (Road, Number, Type, Description, Return to), but plain rows in that order work too.</p>
+        <textarea id="pasteTxt" placeholder="ATSF&#9;12345&#9;XM&#9;40' boxcar, red&#9;Staging&#10;GATX 4410&#9;TM&#9;Tank car, black&#9;Yard"></textarea>
+        <div class="row" style="margin-top:8px">
+          <button class="btn go small" id="pasteGo">Add these cars</button>
+          <span class="note" id="pasteMsg"></span>
+        </div>
+      </details>
+      <datalist id="typeList">
+        <option value="XM">Boxcar</option><option value="XMI">Insulated boxcar</option><option value="RS">Ice reefer</option>
+        <option value="RP">Mechanical reefer</option><option value="TM">Tank car</option><option value="HM">2-bay hopper</option>
+        <option value="HT">3- or 4-bay hopper</option><option value="LO">Covered hopper</option><option value="GB">Gondola</option>
+        <option value="FM">Flatcar</option><option value="FB">Bulkhead flat</option><option value="SM">Stock car</option>
+        <option value="FC">Piggyback flat</option><option value="XA">Auto boxcar</option><option value="MW">Work car</option>
+      </datalist>
+    </div>
+  </section>
+
+  <!-- 2 PLACES -->
+  <section class="pane" id="pane-places" hidden>
+    <h2>Industries and places</h2>
+    <p class="lead">Optional. Where cars go: the car types each spot takes and what it receives or ships. These feed the waybill maker (Pro) and the place list when you write waybills by hand.</p>
+    <div class="sheet-ui">
+      <div id="placeTable"></div>
+      <div class="row" style="margin-top:10px">
+        <button class="btn" id="addPlace">+ Add a place</button>
+        <label class="fld" style="flex-direction:row;align-items:center;gap:8px;margin-left:auto">Off-layout / staging is called
+          <input type="text" id="stagingName" style="width:150px" maxlength="30">
+        </label>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 WAYBILLS -->
+  <section class="pane" id="pane-bills" hidden>
+    <h2>4-cycle waybills</h2>
+    <p class="lead">Each waybill has four moves, one per session. They match car types, not single cars: any XM waybill can ride in any XM car card.</p>
+    <div class="row" style="margin-bottom:12px">
+      <button class="btn" id="dealBtn">Make waybills for my cars</button>
+      <button class="btn" id="addBill">+ Blank waybill</button>
+      <span class="note" id="dealNote"></span>
+    </div>
+    <div id="billList"></div>
+  </section>
+
+  <!-- 4 PRINT -->
+  <section class="pane" id="pane-print" hidden>
+    <h2>Print</h2>
+    <div class="sheet-ui">
+      <div class="row">
+        <label class="fld">Paper
+          <select id="paper"><option value="letter">US Letter</option><option value="a4">A4</option></select>
+        </label>
+        <label class="fld">Size
+          <select id="size">
+            <option value="s">Small: card 2¼ in wide</option>
+            <option value="m">Standard: card 2½ in wide</option>
+            <option value="l">Large: card 3 in wide</option>
+          </select>
+        </label>
+        <label class="fld">Car card style
+          <select id="style">
+            <option value="pocket">Fold-up pocket (plain paper)</option>
+            <option value="flat">Flat card (for a sleeve or bought pocket)</option>
+          </select>
+        </label>
+      </div>
+      <p class="note" id="sizeNote"></p>
+      <div class="row" style="margin-top:10px">
+        <button class="btn go" id="printCards">Print car cards</button>
+        <button class="btn go" id="printBills">Print waybills</button>
+        <span class="note" id="printNote"></span>
+      </div>
+      <p class="note">In the print window set <b>Scale: 100%</b> (or "Actual size"). The bar at the bottom of each sheet should measure exactly 1 inch. Card stock (65–110 lb) folds and lasts best.</p>
+    </div>
+    <h3 style="margin:18px 0 8px;font-size:18px;text-transform:uppercase">First sheet, as it will print</h3>
+    <div class="row" style="margin-bottom:8px">
+      <button class="btn small" id="pvCards" aria-pressed="true">Cards</button>
+      <button class="btn small" id="pvBills" aria-pressed="false">Waybills</button>
+      <span class="note" id="pvInfo"></span>
+    </div>
+    <div class="pv-wrap" id="pvWrap"><div class="pv-scale" id="pvScale"></div></div>
+  </section>
+
+  <section class="pro" id="proSec">
+    <h2 id="proTitle">Car Card Press Pro</h2>
+    <div id="proBody"></div>
+  </section>
+
+  <footer class="site">
+    <p>Your roster stays in this browser on this device. Nothing is uploaded. Use <button class="lnk" id="backupBtn">Save a backup file</button> to move it to another computer, and <button class="lnk" id="restoreBtn">Load a backup</button> to bring it back.
+      <input type="file" id="restoreFile" accept=".json,application/json" hidden></p>
+    <p>Car Card Press is made by Sam at <a href="https://samsbench.com/">samsbench.com</a>.</p>
+  </footer>
+</main>
+
+<input type="file" id="photoFile" accept="image/*" hidden>
+<div class="toast" id="toast" hidden></div>
+<div id="printArea"></div>
+
+<script>
+'use strict';
+var SITE = 'https://samsbench.com/car-cards/';
+var APP_KEY = 'car-cards';
+var VERIFY_URL = 'https://app-bizz-api.whop.site/api/verify';
+/* Pro: $9 once, free tier prints 12 cars (user's choice question, 11-24). */
+var PRICE = '$9';
+var CHECKOUT_PLAN = 'plan_4c30c2JzMtq2z';   // Whop prod_qbF95qRgVVGKJ "Car Card Press Pro", $9 one-time (user 11-24); used with ?a=<affiliate>
+var CHECKOUT_REDIRECT = 'https://whop.com/checkout/ch_gxg8nweO0ieIyDQ/';   // same plan, returns to samsbench.com/car-cards/?bought=1
+var FREE_CARS = 12;              // free tier prints up to this many car cards
+var GIFT_SHA256 = [];            // fingerprints of gift codes in outreach/gift_codes.json (codes themselves never ship)
+var GC_CODE = 'carcards';        // GoatCounter site
+
+/* ---------- measurement ---------- */
+/* SRC = where this visitor came from (?via=, or "aff" for a Whop affiliate link). Kept 60 days on this device, because
+   people who get a letter often come back days later to print; every funnel event is sent twice: plain and ".<src>". */
+function cleanVia(v){ return String(v || '').toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 20); }
+var SRC = (function(){ try{
+  var q = new URLSearchParams(location.search), v = cleanVia(q.get('via')) || (q.get('a') ? 'aff' : '');
+  if(v){ localStorage.setItem('ccp.src', JSON.stringify({v: v, t: Date.now()})); return v; }
+  var o = JSON.parse(localStorage.getItem('ccp.src') || 'null');
+  return (o && o.v && Date.now() - o.t < 60 * 864e5) ? cleanVia(o.v) : '';
+}catch(e){ return ''; } })();
+var FUNNEL_EV = {'print-menu':1,'backup':1,'bought-return':1,'example':1,'tool-start':1,'paste-import':1,'photo-add':1,'deal':1,'print-cards':1,'print-bills':1,'print-own':1,'own-5':1,'own-13':1,'pro-seen':1,'pro-gate':1,'buy-click':1,'pro-unlocked':1,'gift-unlock':1,'limit-hit':1};
+function track(name, tries){
+  try{
+    if(!tries && SRC && FUNNEL_EV[name]) track(name + '.' + SRC);
+    if(window.goatcounter && window.goatcounter.count) window.goatcounter.count({path: name, title: name, event: true});
+    else if((tries||0) < 20) setTimeout(function(){ track(name, (tries||0) + 1); }, 500);
+  }catch(e){}
+}
+/* once per device: the first time something happens on this browser */
+function trackOnce(name){
+  try{ var f = JSON.parse(localStorage.getItem('ccp.flags') || '{}'); if(f[name]) return; f[name] = 1; localStorage.setItem('ccp.flags', JSON.stringify(f)); }catch(e){}
+  track(name);
+}
+
+/* ---------- state ---------- */
+var KEY = 'ccp.state';
+function blank(){ return {v:1, rr:'', staging:'Staging', cars:[], places:[], bills:[], set:{paper:'letter', size:'m', style:'pocket'}, seq:1}; }
+var S = blank();
+function uid(p){ S.seq = (S.seq||1) + 1; return p + S.seq.toString(36); }
+function save(){
+  var ok = true;
+  try{ localStorage.setItem(KEY, JSON.stringify(S)); } catch(e){ ok = false; }
+  var b = document.getElementById('saveBar'); if(b) b.hidden = ok;
+}
+function load(){ try{ var t = localStorage.getItem(KEY); if(t){ var o = JSON.parse(t); if(o && o.v === 1){ S = Object.assign(blank(), o); S.set = Object.assign(blank().set, o.set || {}); clean(); } } }catch(e){} }
+function clean(){
+  S.rr = str(S.rr); S.staging = str(S.staging) || 'Staging';
+  S.cars = (Array.isArray(S.cars) ? S.cars : []).filter(function(c){ return c && typeof c === 'object'; });
+  S.places = (Array.isArray(S.places) ? S.places : []).filter(function(c){ return c && typeof c === 'object'; });
+  S.bills = (Array.isArray(S.bills) ? S.bills : []).filter(function(b){ return b && typeof b === 'object'; });
+  S.cars.forEach(function(c){ ['id','mark','num','type','desc','home','note','photo'].forEach(function(k){ if(typeof c[k] !== 'string') c[k] = c[k] == null ? '' : String(c[k]); }); if(!c.id) c.id = uid('c');
+    if(c.photo && !/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+\/=]+$/.test(c.photo)) c.photo = ''; });
+  var nex = 0; S.cars.forEach(function(c){ if(c.ex && ++nex > 6) delete c.ex; });   /* only the 6 example cars can be example cars */
+  S.places.forEach(function(p){ ['id','name','town','takes','gets','ships'].forEach(function(k){ if(typeof p[k] !== 'string') p[k] = p[k] == null ? '' : String(p[k]); }); if(!p.id) p.id = uid('p'); });
+  S.bills.forEach(function(b){
+    if(!b.id) b.id = uid('w'); if(typeof b.type !== 'string') b.type = '';
+    if(!Array.isArray(b.cy)) b.cy = [];
+    for(var i = 0; i < 4; i++){ var c = b.cy[i] || {}; b.cy[i] = {kind: c.kind === 'empty' ? 'empty' : 'load', to: str(c.to), from: str(c.from), lading: str(c.lading)}; }
+  });
+}
+function str(v){ return v == null ? '' : String(v); }
+
+var PRO = {key:'', kind:''};
+function loadPro(){ try{ var t = localStorage.getItem('ccp.pro'); if(t) PRO = Object.assign(PRO, JSON.parse(t)); }catch(e){} }
+function savePro(){ try{ localStorage.setItem('ccp.pro', JSON.stringify(PRO)); }catch(e){} }
+function isPro(){ return !!PRO.key; }
+
+/* ---------- helpers ---------- */
+function $(id){ return document.getElementById(id); }
+function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function toast(msg){ var t = $('toast'); t.textContent = msg; t.hidden = false; clearTimeout(toast.h); toast.h = setTimeout(function(){ t.hidden = true; }, 4200); }
+function code(t){ return String(t || '').trim().toUpperCase().split(/[\s,\/]+/)[0] || ''; }
+function codes(list){ return String(list || '').toUpperCase().split(/[\s,\/;]+/).filter(Boolean); }
+function ownCars(){ return S.cars.filter(function(c){ return !c.ex && (c.mark || c.num); }); }
+function shuffle(a){ for(var i = a.length - 1; i > 0; i--){ var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+
+/* ---------- sizes (inches) ----------
+   A car card is a panel plus a flap. The flap folds back to make the pocket; its text is printed upside down so it reads
+   right side up once folded and turned over. A waybill is four panels in a strip, folded in half (print outside):
+   panels 1 and 3 print upright, 2 and 4 upside down, so the next move is always "turn it end for end" or "turn it over". */
+var SIZES = {
+  s: {cw:2.25, wh:1.0},
+  m: {cw:2.5,  wh:1.25},
+  l: {cw:3.0,  wh:1.5}
+};
+function dims(){
+  var z = SIZES[S.set.size] || SIZES.m;
+  var wh = z.wh;
+  return {cw: z.cw, ph: 2 * wh + 0.25, fh: wh, ww: +(z.cw - 0.25).toFixed(2), wh: wh};
+}
+var PAPER = {letter: {w:8.5, h:11, name:'US Letter'}, a4: {w:8.27, h:11.69, name:'A4'}};
+var MARGIN = 0.25, FOOT = 0.75;   /* footer sits 0.32 in above the paper edge so home printers don't cut it */
+
+/* ---------- printed pieces ---------- */
+function carFace(c){
+  var mark = (c.mark || '').toUpperCase(), num = c.num || '';
+  return '<div class="rr">' + esc(S.rr || 'Car card') + '</div>'
+    + '<div class="big">' + esc((mark + ' ' + num).trim() || '—') + '</div>'
+    + '<div class="kind">' + esc([code(c.type), c.desc].filter(Boolean).join(' · ')) + '</div>'
+    + '<div class="ret">When empty return to<br><b>' + esc(c.home || S.staging || '') + '</b></div>';
+}
+function cardHTML(c, style, d){
+  d = d || dims();
+  var photo = (c.photo && isPro()) ? c.photo : '';
+  var flat = style === 'flat';
+  var h = d.ph + d.fh;
+  var thumb = photo ? '<div class="tn" style="background-image:url(' + photo + ')"></div>' : '';
+  /* flat: one face, car info at the top (bought pockets cover the bottom half) */
+  if(flat) return '<div class="cc flat" style="width:' + d.cw + 'in;height:' + h + 'in"><div class="face">' + carFace(c)
+    + (photo ? '<div class="photo" style="background-image:url(' + photo + ')"></div>' : '')
+    + (c.note ? '<div class="nt">' + esc(c.note) + '</div>' : '') + '</div></div>';
+  var panel = '<div class="pnl" style="height:' + d.ph + 'in">' + carFace(c)
+        + (photo ? '<div class="photo" style="height:' + Math.max(0.5, d.ph - 1.45).toFixed(2) + 'in;background-image:url(' + photo + ')"></div>' : '')
+        + (c.note ? '<div class="nt">' + esc(c.note) + '</div>' : '')
+        + '<div class="rev">Fold the flap back on the dashed line, tape both edges. The pocket side is the front.</div></div>';
+  return '<div class="cc sz-' + (S.set.size || 'm') + '" style="width:' + d.cw + 'in;height:' + h + 'in">' + panel
+    + '<div class="flp" style="height:' + d.fh + 'in"><div class="in' + (thumb ? ' hasTn' : '') + '"><div class="tx">' + carFace(c) + '</div>' + thumb + '</div></div>'
+    + '<div class="foldlbl" style="top:' + d.ph + 'in">fold back</div>'
+    + '</div>';
+}
+function cycleHTML(b, i){
+  var c = b.cy[i], t = code(b.type);
+  var hd = '<div class="hd"><span class="num">' + (i + 1) + '</span><span>' + esc(S.rr || 'Waybill') + '</span><span class="ty">' + esc(t) + '</span></div>';
+  var stg = S.staging || 'Staging';
+  function off(n){ return n && n === stg ? ' <span class="off">(OFF LAYOUT)</span>' : ''; }
+  if(c.kind === 'empty'){
+    var home = !c.to || c.to === stg;   /* empty going home vs empty sent to a shipper to be loaded */
+    return hd + '<div class="mty">EMPTY</div><div class="lbl">' + (home ? 'RETURN EMPTY TO' : 'TO, FOR LOADING') + '</div><div class="ln to nolb">' + esc(c.to || stg) + off(c.to || stg) + '</div>';
+  }
+  return hd
+    + '<div class="ln to"><span class="lb">TO</span>' + esc(c.to || '') + off(c.to) + '</div>'
+    + '<div class="ln"><span class="lb">FROM</span>' + esc(c.from || '') + off(c.from) + '</div>'
+    + '<div class="ln"><span class="lb">LADING</span>' + esc(c.lading || '') + '</div>';
+}
+function billHTML(b, d){
+  d = d || dims();
+  var h = d.wh, out = '<div class="wbf" style="width:' + d.ww + 'in;height:' + (4 * h) + 'in">';
+  for(var i = 0; i < 4; i++){
+    out += '<div class="p' + (i % 2 ? ' r' : '') + (i === 2 ? ' fold' : '') + '" style="top:' + (i * h) + 'in;height:' + h + 'in"><div class="in">' + cycleHTML(b, i) + '</div></div>';
+  }
+  return out + '</div>';
+}
+
+/* ---------- sheets ---------- */
+function layout(itemW, itemH){
+  var P = PAPER[S.set.paper] || PAPER.letter;
+  var aw = P.w - 2 * MARGIN, ah = P.h - MARGIN - FOOT;
+  var cols = Math.floor((aw + 1e-6) / itemW), rows = Math.floor((ah + 1e-6) / itemH);
+  return {cols: cols, rows: rows, per: cols * rows, P: P};
+}
+function sheetsHTML(kind){
+  var d = dims(), items, w, h, how;
+  if(kind === 'cards'){
+    items = printableCars().map(function(c){ return cardHTML(c, S.set.style, d); });
+    w = d.cw; h = d.ph + d.fh;
+    how = S.set.style === 'flat' ? 'Cut on the solid lines.' : 'Cut on the solid lines. Fold the flap back on the dashed line, tape both edges.';
+  } else {
+    items = S.bills.map(function(b){ return billHTML(b, d); });
+    w = d.ww; h = 4 * d.wh;
+    how = 'Cut on the solid lines, fold on the dashed line (print outside). 1 on top; then turn end for end (2), turn over like a page (3), end for end (4).';
+  }
+  var L = layout(w, h), Lr = layout(h, w);
+  if(kind === 'bills' && Lr.per > L.per){   /* lay the strips sideways when more fit that way */
+    items = items.map(function(x){ return '<div style="position:relative;width:' + h + 'in;height:' + w + 'in"><div style="position:absolute;left:0;top:0;transform-origin:0 0;transform:translateX(' + h + 'in) rotate(90deg)">' + x + '</div></div>'; });
+    var t = w; w = h; h = t; L = Lr;
+  }
+  if(!items.length || L.per < 1) return {html:'', pages:0, per:L.per};
+  var gx = (L.P.w - L.cols * w) / 2, out = '', pages = Math.ceil(items.length / L.per);
+  for(var p = 0; p < pages; p++){
+    var chunk = items.slice(p * L.per, (p + 1) * L.per);
+    out += '<div class="sheet" style="width:' + L.P.w + 'in;height:' + L.P.h + 'in">'
+      + '<div class="grid" style="left:' + gx.toFixed(3) + 'in;top:' + MARGIN + 'in;grid-template-columns:repeat(' + L.cols + ',' + w + 'in);grid-auto-rows:' + h + 'in">' + chunk.join('') + '</div>'
+      + '<div class="foot"><div class="ruler" title="1 inch"></div><div class="how">' + esc(how) + '</div>'
+      + '<div class="cr">' + (isPro() ? 'Sheet ' + (p + 1) + ' of ' + pages : 'Car Card Press · samsbench.com/car-cards · sheet ' + (p + 1) + '/' + pages) + '</div></div></div>';
+  }
+  return {html: out, pages: pages, per: L.per};
+}
+function printableCars(){
+  var list = S.cars.filter(function(c){ return c.mark || c.num; });
+  if(!isPro()){
+    var own = list.filter(function(c){ return !c.ex; });
+    if(own.length > FREE_CARS) list = list.filter(function(c){ return c.ex; }).concat(own.slice(0, FREE_CARS));
+  }
+  return list;
+}
+
+function doPrint(kind){
+  if(kind === 'cards' && !S.cars.some(function(c){ return c.mark || c.num; })){ toast('Add a car first.'); go('cars'); return; }
+  if(kind === 'bills' && !S.bills.length){ toast('Make some waybills first.'); go('bills'); return; }
+  var r = sheetsHTML(kind);
+  if(!r.pages){ toast('That size does not fit on this paper. Pick a smaller size.'); return; }
+  $('pageSize').textContent = '@page{size:' + (S.set.paper === 'a4' ? 'A4' : 'letter') + ';margin:0}';
+  $('printArea').innerHTML = r.html;
+  track(kind === 'cards' ? 'print-cards' : 'print-bills');
+  if(ownCars().length) trackOnce('print-own');
+  if(kind === 'cards' && !isPro() && ownCars().length > FREE_CARS){ track('limit-hit'); toast('Printed your first ' + FREE_CARS + ' cars. Pro prints all ' + ownCars().length + '.'); }
+  setTimeout(function(){ window.print(); }, 60);
+}
+window.addEventListener('afterprint', function(){ $('printArea').innerHTML = ''; });
+/* Ctrl+P or the browser menu: print what the preview shows instead of a blank page */
+window.addEventListener('beforeprint', function(){
+  if($('printArea').innerHTML) return;
+  var r = sheetsHTML(pvKind);
+  if(!r.pages) r = sheetsHTML(pvKind === 'cards' ? 'bills' : 'cards');
+  $('pageSize').textContent = '@page{size:' + (S.set.paper === 'a4' ? 'A4' : 'letter') + ';margin:0}';
+  $('printArea').innerHTML = r.html; if(r.pages) track('print-menu');
+});
+
+/* ---------- rendering the editor ---------- */
+function renderCars(){
+  var el = $('carTable');
+  if(!S.cars.length){
+    el.innerHTML = '<div class="empty">No cars yet. Add one, paste a list, or <button class="lnk" data-ex="1">load the example railroad</button> to see how it works.</div>';
+  } else {
+    var rows = S.cars.map(function(c, i){
+      var ph = c.photo ? '<img alt="" src="' + c.photo + '">' : (isPro() ? '<span>+ Photo</span>' : '<span>+ Photo</span><span class="lock">Pro</span>');
+      return '<tr data-i="' + i + '">'
+        + '<td class="phc"><div class="ph" data-photo="' + i + '" role="button" tabindex="0" aria-label="Add a photo of this car">' + ph + '</div></td>'
+        + '<td class="mk"><span class="ml">Road</span><input type="text" data-f="mark" value="' + esc(c.mark) + '" placeholder="ATSF" aria-label="Reporting marks" maxlength="8"></td>'
+        + '<td><span class="ml">Number</span><input type="text" data-f="num" value="' + esc(c.num) + '" placeholder="12345" aria-label="Car number" maxlength="10"></td>'
+        + '<td><span class="ml">Type</span><input type="text" data-f="type" value="' + esc(c.type) + '" placeholder="XM" aria-label="Type code" list="typeList" maxlength="6"></td>'
+        + '<td class="wide"><span class="ml">Description</span><input type="text" data-f="desc" value="' + esc(c.desc) + '" placeholder="40\' boxcar, red" aria-label="Description" maxlength="40"></td>'
+        + '<td class="wide"><span class="ml">Return empty to</span><input type="text" data-f="home" value="' + esc(c.home) + '" placeholder="default: ' + esc(S.staging || 'Staging') + '" aria-label="Return empty to" maxlength="30"></td>'
+        + '<td class="del"><button class="x" data-delcar="' + i + '" aria-label="Remove this car">×</button></td></tr>';
+    }).join('');
+    el.innerHTML = '<table class="ros"><thead><tr><th>Photo</th><th>Road</th><th>Number</th><th>Type</th><th>Description</th><th>Return empty to</th><th></th></tr></thead><tbody>' + rows + '</tbody></table>';
+  }
+  var n = ownCars().length, ex = S.cars.filter(function(c){ return c.ex; }).length;
+  var note = '';
+  if(ex) note = 'Example cars are marked so you can clear them: <button class="lnk" id="clearEx">remove the example</button>. ';
+  if(!isPro() && n > FREE_CARS) note += 'Free prints the first ' + FREE_CARS + ' of your cars; <a href="#proSec">Pro</a> prints all ' + n + '.';
+  if(n > FREE_CARS) trackOnce('own-13');
+  $('carNote').innerHTML = note;
+  counts();
+}
+function renderPlaces(){
+  var el = $('placeTable');
+  if(!S.places.length){
+    el.innerHTML = '<div class="empty">No places yet. Add the industries on your layout, or skip this and write waybills by hand.</div>';
+  } else {
+    el.innerHTML = '<table class="ros"><thead><tr><th>Place</th><th>Town</th><th>Takes car types</th><th>Receives</th><th>Ships</th><th></th></tr></thead><tbody>'
+      + S.places.map(function(p, i){
+        return '<tr data-pi="' + i + '">'
+          + '<td class="wide"><span class="ml">Place</span><input type="text" data-pf="name" value="' + esc(p.name) + '" placeholder="Acme Feed &amp; Seed" aria-label="Place name" maxlength="36"></td>'
+          + '<td><span class="ml">Town</span><input type="text" data-pf="town" value="' + esc(p.town) + '" placeholder="Millbrook" aria-label="Town" maxlength="24"></td>'
+          + '<td class="mk"><span class="ml">Takes types</span><input type="text" data-pf="takes" value="' + esc(p.takes) + '" placeholder="XM, LO" aria-label="Car types it takes" maxlength="30"></td>'
+          + '<td><span class="ml">Receives</span><input type="text" data-pf="gets" value="' + esc(p.gets) + '" placeholder="Feed" aria-label="What it receives" maxlength="30"></td>'
+          + '<td><span class="ml">Ships</span><input type="text" data-pf="ships" value="' + esc(p.ships) + '" placeholder="(nothing)" aria-label="What it ships" maxlength="30"></td>'
+          + '<td class="del"><button class="x" data-delplace="' + i + '" aria-label="Remove this place">×</button></td></tr>';
+      }).join('') + '</tbody></table>';
+  }
+  $('stagingName').value = S.staging;
+  counts();
+}
+function placeOptions(sel){
+  var names = [S.staging || 'Staging'].concat(S.places.map(function(p){ return p.name; }).filter(Boolean));
+  if(sel && names.indexOf(sel) < 0) names.push(sel);
+  return names;
+}
+function renderBills(){
+  var el = $('billList');
+  $('dealBtn').innerHTML = 'Make waybills for my cars' + (isPro() ? '' : ' <span class="lock" style="background:var(--ink)">Pro</span>');
+  $('dealBtn').classList.toggle('go', isPro()); $('addBill').classList.toggle('go', !isPro());
+  if(!S.bills.length){
+    el.innerHTML = '<div class="empty">' + (isPro() ? 'No waybills yet. Press <b>Make waybills for my cars</b> to get one per car from your places, or add a blank one.' : 'No waybills yet. Press <b>+ Blank waybill</b> and fill in the four moves.') + '</div>';
+    counts(); return;
+  }
+  el.innerHTML = '<div class="wbl">' + S.bills.map(function(b, bi){
+    var cys = b.cy.map(function(c, i){
+      var opts = placeOptions(c.to).map(function(n){ return '<option' + (n === c.to ? ' selected' : '') + '>' + esc(n) + '</option>'; }).join('');
+      var A = ' data-b="' + bi + '" data-c="' + i + '"';
+      return '<span class="k">' + (i + 1) + '</span><div>'
+        + '<div class="two"><label class="mini">Move<select' + A + ' data-k="kind"><option value="load"' + (c.kind === 'load' ? ' selected' : '') + '>Load</option><option value="empty"' + (c.kind === 'empty' ? ' selected' : '') + '>Empty</option></select></label>'
+        + '<label class="mini">' + (c.kind === 'empty' ? 'Empty to' : 'To (consignee)') + '<input type="text" list="placeList"' + A + ' data-k="to" value="' + esc(c.to) + '"></label></div>'
+        + (c.kind === 'load' ? '<div class="two" style="margin-top:3px"><label class="mini">Lading<input type="text"' + A + ' data-k="lading" value="' + esc(c.lading) + '"></label><label class="mini">From (shipper)<input type="text" list="placeList"' + A + ' data-k="from" value="' + esc(c.from) + '"></label></div>' : '')
+        + '</div>';
+    }).join('');
+    return '<div class="wbi"><h3>Waybill for car type <input type="text" data-b="' + bi + '" data-k="type" value="' + esc(b.type) + '" list="typeList" aria-label="Car type" style="width:64px;font-family:var(--type);text-transform:uppercase;border:1px solid #bba;padding:2px 4px"> <button class="x" style="margin-left:auto" data-delbill="' + bi + '" aria-label="Remove this waybill">×</button></h3>'
+      + '<div class="need"' + (b.type.trim() ? ' hidden' : '') + '>Type a car type (XM, TM…) so you know which cars it goes in.</div>' + '<div class="cy">' + cys + '</div></div>';
+  }).join('') + '</div><datalist id="placeList">' + placeOptions().map(function(n){ return '<option value="' + esc(n) + '">'; }).join('') + '</datalist>';
+  counts();
+}
+function counts(){
+  var n = S.cars.filter(function(c){ return c.mark || c.num; }).length;
+  $('cntCars').textContent = n ? '(' + n + ')' : '';
+  $('cntPlaces').textContent = S.places.length ? '(' + S.places.length + ')' : '';
+  $('cntBills').textContent = S.bills.length ? '(' + S.bills.length + ')' : '';
+}
+function renderPrint(){
+  $('paper').value = S.set.paper; $('size').value = S.set.size; $('style').value = S.set.style;
+  var d = dims(), cl = layout(d.cw, d.ph + d.fh), bl = layout(d.ww, 4 * d.wh), blr = layout(4 * d.wh, d.ww);
+  if(blr.per > bl.per) bl = blr;
+  $('sizeNote').textContent = 'Car card ' + d.cw + ' × ' + (d.ph + d.fh).toFixed(2).replace(/\.?0+$/, '') + ' in before folding (' + cl.per + ' per sheet). '
+    + 'Waybill ' + d.ww + ' × ' + (2 * d.wh) + ' in folded (' + bl.per + ' per sheet). The folded waybill sits in the pocket with one move showing.';
+  var nc = printableCars().length, nb = S.bills.length;
+  $('printNote').textContent = (nc ? nc + ' card' + (nc > 1 ? 's' : '') + ' on ' + Math.ceil(nc / Math.max(1, cl.per)) + ' sheet' + (Math.ceil(nc / Math.max(1, cl.per)) > 1 ? 's' : '') : 'No cars yet')
+    + ' · ' + (nb ? nb + ' waybill' + (nb > 1 ? 's' : '') + ' on ' + Math.ceil(nb / Math.max(1, bl.per)) + ' sheet' + (Math.ceil(nb / Math.max(1, bl.per)) > 1 ? 's' : '') : 'no waybills yet')
+    + (!isPro() && ownCars().length > FREE_CARS ? '. ' + (ownCars().length - FREE_CARS) + ' of your cars are left out: free prints ' + FREE_CARS + ', Pro prints all.' : '');
+  renderPreview();
+}
+var pvKind = 'cards';
+function renderPreview(){
+  $('pvCards').setAttribute('aria-pressed', pvKind === 'cards'); $('pvBills').setAttribute('aria-pressed', pvKind === 'bills');
+  $('pvCards').classList.toggle('go', pvKind === 'cards'); $('pvBills').classList.toggle('go', pvKind === 'bills');
+  var r = sheetsHTML(pvKind), sc = $('pvScale');
+  if(!r.pages){ sc.innerHTML = '<p style="color:#fff;margin:0">' + (pvKind === 'cards' ? 'Add cars to see the sheet.' : 'Make waybills to see the sheet.') + '</p>'; sc.style.transform = ''; $('pvWrap').style.height = ''; $('pvInfo').textContent = ''; return; }
+  var tmp = document.createElement('div'); tmp.innerHTML = r.html;
+  sc.innerHTML = ''; sc.appendChild(tmp.firstChild);
+  $('pvInfo').textContent = r.pages > 1 ? 'Sheet 1 of ' + r.pages : '';
+  fitPreview();
+}
+function fitPreview(){
+  var sc = $('pvScale'), sh = sc.firstChild; if(!sh || !sh.offsetWidth) return;
+  var avail = $('pvWrap').clientWidth - 28, k = Math.min(1, avail / sh.offsetWidth);
+  sc.style.transform = 'scale(' + k + ')';
+  $('pvWrap').style.height = (sh.offsetHeight * k + 28) + 'px';
+}
+window.addEventListener('resize', function(){ fitPreview(); rack(); });
+
+/* hero rack: a real card and waybill from the example (or the user's first car) */
+function rack(){
+  var el = $('rack'); if(!el) return;
+  var c = S.cars.filter(function(x){ return x.mark || x.num; })[0] || EXAMPLE.cars[2];
+  var t = code(c.type), b = S.bills.filter(function(x){ return code(x.type) === t; })[0] || (t === 'TM' || !S.cars.length ? EXAMPLE_BILL : null);
+  if(!b){ b = blankBill(t); b.cy[0] = {kind:'empty', to:'', from:'', lading:''}; }
+  var keepRR = S.rr; if(!S.cars.length) S.rr = EXAMPLE.rr;
+  var d = SIZES.m, dd = {cw:d.cw, ph:2 * d.wh + 0.25, fh:d.wh, ww:d.cw - 0.25, wh:d.wh};
+  var html = '<div class="cc-folded" style="position:absolute;left:.1in;top:.3in;transform:rotate(-4deg)">' + foldedCard(c, b, dd) + '</div>'
+    + '<div style="position:absolute;left:2.75in;top:.2in;transform:rotate(3deg);box-shadow:0 6px 16px rgba(40,30,10,.28)">' + billHTML(b, dd) + '</div>';
+  S.rr = keepRR;
+  el.innerHTML = '<div id="rackIn" style="position:relative;width:5.2in;height:5.7in;transform-origin:0 0">' + html + '</div>';
+  var k = Math.min(1, el.clientWidth / (5.2 * 96));
+  $('rackIn').style.transform = 'scale(' + k + ')';
+  el.style.minHeight = (5.7 * 96 * k) + 'px';
+}
+/* what the card looks like folded, with the waybill in the pocket: drawn for the hero only */
+function foldedCard(c, b, d){
+  var photo = c.photo || '';
+  return '<div class="cc" style="width:' + d.cw + 'in;height:' + d.ph + 'in;box-shadow:0 6px 16px rgba(40,30,10,.28)">'
+    + '<div style="position:absolute;left:.12in;right:.12in;top:.12in;height:' + (2 * d.wh) + 'in;background:#fff;outline:.6pt solid #000;overflow:hidden">'
+    + '<div class="wbf" style="width:100%;height:' + d.wh + 'in;outline:0"><div class="p" style="top:0;height:' + d.wh + 'in"><div class="in">' + cycleHTML(b, 0) + '</div></div></div></div>'
+    + '<div style="position:absolute;left:0;right:0;bottom:0;height:' + d.fh + 'in;background:#fff;border-top:1.2pt solid #000;padding:.07in .1in;display:flex;gap:.08in">'
+    + '<div style="flex:1;min-width:0;overflow:hidden">' + carFace(c) + '</div>'
+    + (photo ? '<div style="width:.95in;border:.6pt solid #000;background:#eee center/cover no-repeat;background-image:url(' + photo + ')"></div>' : '')
+    + '</div></div>';
+}
+
+/* ---------- tabs ---------- */
+function go(tab){
+  $('toast').hidden = true;
+  document.querySelectorAll('.steps button').forEach(function(b){ b.setAttribute('aria-selected', b.dataset.tab === tab); });
+  ['cars','places','bills','print'].forEach(function(t){ $('pane-' + t).hidden = t !== tab; });
+  if(tab === 'print') renderPrint();
+  if(tab === 'bills') renderBills();
+  if(tab === 'places') renderPlaces();
+  var nav = document.querySelector('.steps'); if(nav.getBoundingClientRect().top < 0 || nav.getBoundingClientRect().top > innerHeight * .6) nav.scrollIntoView({behavior:'smooth'});
+}
+document.querySelectorAll('.steps button').forEach(function(b){ b.addEventListener('click', function(){ go(b.dataset.tab); }); });
+document.querySelectorAll('[data-go]').forEach(function(b){ b.addEventListener('click', function(){ go(b.dataset.go); if(!S.cars.length){ addCar(); } }); });
+
+/* ---------- editing ---------- */
+var started = false;
+function touched(){
+  if(!started && ownCars().length){ started = true; trackOnce('tool-start'); }
+  if(ownCars().length >= 5) trackOnce('own-5');
+}
+function addCar(){ S.cars.push({id: uid('c'), mark:'', num:'', type:'', desc:'', home:'', note:'', photo:''}); save(); renderCars(); var ins = $('carTable').querySelectorAll('tr:last-child input'); if(ins[0]) ins[0].focus(); }
+$('addCar').addEventListener('click', addCar);
+$('carTable').addEventListener('input', function(e){
+  var t = e.target, tr = t.closest('tr'); if(!tr || !t.dataset.f) return;
+  var c = S.cars[+tr.dataset.i]; if(!c) return;
+  c[t.dataset.f] = t.value; if(t.dataset.f === 'mark' || t.dataset.f === 'num') delete c.ex;
+  save(); counts(); touched();
+});
+$('carTable').addEventListener('click', function(e){
+  var d = e.target.closest('[data-delcar]'); if(d){ S.cars.splice(+d.dataset.delcar, 1); save(); renderCars(); return; }
+  var p = e.target.closest('[data-photo]'); if(p){ pickPhoto(+p.dataset.photo); return; }
+  if(e.target.closest('[data-ex]')) loadExample();
+});
+$('carTable').addEventListener('keydown', function(e){ var p = e.target.closest('[data-photo]'); if(p && (e.key === 'Enter' || e.key === ' ')){ e.preventDefault(); pickPhoto(+p.dataset.photo); } });
+$('carNote').addEventListener('click', function(e){ if(e.target.id === 'clearEx') clearExample(); });
+$('rrName').addEventListener('input', function(e){ S.rr = e.target.value; save(); rack(); });
+
+var photoFor = -1;
+function pickPhoto(i){
+  if(!isPro()){ toast('Photos on cards are part of Pro.'); track('pro-gate'); $('proSec').scrollIntoView({behavior:'smooth'}); return; }
+  photoFor = i; $('photoFile').value = ''; $('photoFile').click();
+}
+$('photoFile').addEventListener('change', function(){
+  var f = this.files && this.files[0]; if(!f || photoFor < 0) return;
+  var img = new Image(), url = URL.createObjectURL(f);
+  img.onload = function(){
+    var k = Math.min(1, 420 / Math.max(img.width, img.height));
+    var cv = document.createElement('canvas'); cv.width = Math.round(img.width * k); cv.height = Math.round(img.height * k);
+    cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);
+    URL.revokeObjectURL(url);
+    var c = S.cars[photoFor]; if(!c) return;
+    c.photo = cv.toDataURL('image/jpeg', 0.7); save(); renderCars(); rack(); track('photo-add');
+  };
+  img.onerror = function(){ toast('That file could not be read as a picture.'); };
+  img.src = url;
+});
+
+/* paste: tab, semicolon or comma separated (quotes respected), or plain spaces; header row optional */
+var TYPE_NAMES = [[/\bcov(ered)?\b|covered|\bcov ?hop/, 'LO'], [/\bauto ?rack/, 'FA'], [/\bbox ?car|^box\b/, 'XM'], [/\b(reefer|refrigerat)/, 'RS'],
+  [/\btank/, 'TM'], [/\bhopper/, 'HM'], [/\bgon(dola)?\b|^gon/, 'GB'], [/\bbulkhead/, 'FB'], [/\bflat/, 'FM'], [/\bstock ?car|^stock/, 'SM'],
+  [/\bcaboose/, 'NE'], [/\b(piggy|tofc|intermodal)/, 'FC']];
+function typeCode(t){
+  t = String(t || '').trim(); if(!t) return {code:'', name:''};
+  if(/^[A-Z]{1,4}$/.test(t)) return {code:t, name:''};               // already an AAR code
+  var low = t.toLowerCase();
+  if(/^[a-z]{1,4}$/i.test(t) && !/^(box|tank|gon|flat)$/i.test(t)) return {code: t.toUpperCase(), name:''};
+  for(var i = 0; i < TYPE_NAMES.length; i++) if(TYPE_NAMES[i][0].test(low)) return {code: TYPE_NAMES[i][1], name: t};
+  return {code: '', name: t};                                           // unknown name: keep it in the description
+}
+function splitCSV(l, sep){
+  var out = [], cur = '', q = false;
+  for(var i = 0; i < l.length; i++){
+    var ch = l[i];
+    if(q){ if(ch === '"'){ if(l[i + 1] === '"'){ cur += '"'; i++; } else q = false; } else cur += ch; }
+    else if(ch === '"' && !cur.trim()) q = true;
+    else if(ch === sep){ out.push(cur); cur = ''; }
+    else cur += ch;
+  }
+  out.push(cur);
+  return out.map(function(x){ return x.trim(); });
+}
+function pickSep(lines){
+  var best = null, bestScore = 0;
+  ['\t', ';', ','].forEach(function(sep){
+    var n = lines.map(function(l){ return splitCSV(l, sep).length - 1; });
+    var hit = n.filter(function(x){ return x > 0; }).length;
+    var same = n.filter(function(x){ return x === n[0]; }).length;
+    var score = hit === lines.length ? 2 + same / lines.length : hit / lines.length;
+    if(score > bestScore + 1e-9){ best = sep; bestScore = score; }
+  });
+  return bestScore >= 1 ? best : null;
+}
+var HEAD = [
+  ['num',  /\b(number|num)\b|^(no\.?|#|car ?#|car ?no\.?)$/],
+  ['type', /^(type|aar|kind|class|code|car ?type)\b/],
+  ['home', /^(return|home|empty|mty)\b/],
+  ['desc', /^(desc|description|color|colour|notes?|comments?|length|model)\b/],
+  ['mark', /^(road|rr|reporting|marks?|initials?|railroad|road ?name|car|cars|car ?id)\b/]
+];
+function parseRoster(txt){
+  var lines = String(txt || '').replace(/\r/g, '').split('\n').filter(function(l){ return l.trim(); });
+  if(!lines.length) return [];
+  var sep = pickSep(lines.slice(0, 20));
+  var keep = null;
+  if(sep){ var all = lines.map(function(l){ return splitCSV(l, sep); }), w = Math.max.apply(null, all.map(function(r){ return r.length; }));
+    keep = []; for(var ci = 0; ci < w; ci++) if(all.some(function(r){ return (r[ci] || '').trim(); })) keep.push(ci); }
+  function cells(l){ if(!sep) return l.trim().split(/\s+/); var r = splitCSV(l, sep); return keep ? keep.map(function(i){ return r[i] || ''; }) : r; }
+  var first = cells(lines[0]), head = first.map(function(h){ return h.toLowerCase().replace(/[_.]+$/, '').trim(); });
+  var map = {}, extra = [];
+  head.forEach(function(h, i){
+    for(var j = 0; j < HEAD.length; j++){
+      var k = HEAD[j][0];
+      if(HEAD[j][1].test(h)){ if(map[k] == null) map[k] = i; else if(k === 'desc') extra.push(i); return; }
+    }
+  });
+  var isHead = (map.mark != null || map.num != null) && !first.some(function(c){ return /^\d+$/.test(c); });
+  if(isHead) lines.shift(); else map = null;
+  var out = [];
+  lines.forEach(function(l){
+    var c = cells(l), car = {mark:'', num:'', type:'', desc:'', home:''};
+    if(map){
+      for(var k in map) car[k] = c[map[k]] || '';
+      var more = extra.map(function(i){ var v = c[i] || ''; return /^\d+(\.\d+)?$/.test(v) && /length/.test(head[i]) ? v + "'" : v; }).filter(Boolean);
+      if(/length/.test(head[map.desc] || '') && /^\d+(\.\d+)?$/.test(car.desc)) car.desc += "'";
+      if(more.length) car.desc = [car.desc].concat(more).filter(Boolean).join(', ');
+    } else if(!sep){
+      /* plain spaces: ATSF 12345 XM 40' boxcar red   (or "ATSF12345 XM ...") */
+      var i = 0, m = /^([A-Za-z&]{1,6})-?(\d[\w-]*)$/.exec(c[0] || '');
+      if(m){ car.mark = m[1]; car.num = m[2]; i = 1; } else { car.mark = c[0] || ''; car.num = c[1] || ''; i = 2; }
+      car.type = c[i] || ''; car.desc = c.slice(i + 1).join(' ');
+    } else {
+      var j = 0, mm = /^([A-Za-z&]{1,6})[\s-]*(\d[\w-]*)$/.exec(c[0] || '');
+      if(mm){ car.mark = mm[1]; car.num = mm[2]; j = 1; } else { car.mark = c[0] || ''; car.num = c[1] || ''; j = 2; }
+      car.type = c[j] || ''; car.desc = c[j + 1] || ''; car.home = c[j + 2] || '';
+    }
+    if(!car.num){ var m2 = /^([A-Za-z&]{1,6})[\s-]+(\d[\w-]*)$/.exec(car.mark.trim()); if(m2){ car.mark = m2[1]; car.num = m2[2]; } }
+    var tc = typeCode(car.type);
+    car.type = tc.code; if(tc.name) car.desc = [tc.name, car.desc].filter(Boolean).join(', ');
+    if(!car.type){ var low = car.desc.toLowerCase(); for(var ti = 0; ti < TYPE_NAMES.length; ti++) if(TYPE_NAMES[ti][0].test(low)){ car.type = TYPE_NAMES[ti][1]; break; } }
+    car.mark = car.mark.trim().toUpperCase().slice(0, 8); car.num = car.num.trim().slice(0, 10);
+    car.type = car.type.slice(0, 6); car.desc = car.desc.trim().slice(0, 40); car.home = car.home.trim().slice(0, 30);
+    if(car.mark || car.num) out.push(car);
+  });
+  return out;
+}
+$('pasteGo').addEventListener('click', function(){
+  var got = parseRoster($('pasteTxt').value);
+  if(!got.length){ $('pasteMsg').textContent = 'No cars found. Each row needs at least a road name or a number.'; return; }
+  got.forEach(function(c){ c.id = uid('c'); c.note = ''; c.photo = ''; S.cars.push(c); });
+  save(); renderCars(); touched();
+  var noNum = got.filter(function(c){ return !c.num; }).length, noType = got.filter(function(c){ return !c.type; }).length;
+  $('pasteMsg').textContent = 'Added ' + got.length + ' car' + (got.length > 1 ? 's' : '') + '.' + (noNum ? ' ' + noNum + ' have no number.' : '') + (noType ? ' ' + noType + ' have no type code (XM, TM…): fill those in, waybills match on them.' : ' Check the type codes: waybills match on them.');
+  $('pasteTxt').value = '';
+  track('paste-import');
+});
+
+/* places */
+$('addPlace').addEventListener('click', function(){ S.places.push({id: uid('p'), name:'', town:'', takes:'', gets:'', ships:''}); save(); renderPlaces(); var ins = $('placeTable').querySelectorAll('tr:last-child input'); if(ins[0]) ins[0].focus(); });
+$('placeTable').addEventListener('input', function(e){ var t = e.target, tr = t.closest('tr'); if(!tr || !t.dataset.pf) return; var p = S.places[+tr.dataset.pi]; if(!p) return; p[t.dataset.pf] = t.value; delete p.ex; save(); counts(); });
+$('placeTable').addEventListener('click', function(e){ var d = e.target.closest('[data-delplace]'); if(d){ S.places.splice(+d.dataset.delplace, 1); save(); renderPlaces(); } });
+$('stagingName').addEventListener('input', function(e){ S.staging = e.target.value; save(); });
+
+/* waybills */
+function blankBill(type){ return {id: uid('w'), type: type || '', cy:[0,1,2,3].map(function(){ return {kind:'load', to:'', from:'', lading:''}; })}; }
+$('addBill').addEventListener('click', function(){ S.bills.push(blankBill('')); save(); renderBills(); });
+$('billList').addEventListener('input', function(e){
+  var t = e.target; if(t.dataset.b == null) return;
+  var b = S.bills[+t.dataset.b]; if(!b) return;
+  if(t.dataset.c == null){ b[t.dataset.k] = t.value; var nd = t.closest('.wbi').querySelector('.need'); if(nd) nd.hidden = !!t.value.trim(); }
+  else { var cy = b.cy[+t.dataset.c]; cy[t.dataset.k] = t.value; if(t.dataset.k === 'kind'){ if(t.value === 'empty'){ cy.from = ''; cy.lading = ''; } save(); renderBills(); return; } }
+  delete b.ex; delete b.auto; save();
+});
+$('billList').addEventListener('click', function(e){ var d = e.target.closest('[data-delbill]'); if(d){ S.bills.splice(+d.dataset.delbill, 1); save(); renderBills(); } });
+
+/* The waybill maker. For each car, one waybill of that car's type. Each half (moves 1-2, moves 3-4) visits one place:
+   a place that receives this type gets a load in, then the car leaves loaded (if the place ships) or empty;
+   a place that only ships gets the empty first, then the load out. Two halves use different places when there are two. */
+function takers(t){ return S.places.filter(function(p){ return p.name && codes(p.takes).indexOf(t) >= 0; }); }
+function half(p, t){
+  var stg = S.staging || 'Staging', at = p.name + (p.town ? ', ' + p.town : '');
+  if(p.gets) return [ {kind:'load', to: at, from: stg, lading: p.gets},
+                      p.ships ? {kind:'load', to: stg, from: at, lading: p.ships} : {kind:'empty', to: stg, from:'', lading:''} ];
+  return [ {kind:'empty', to: at, from:'', lading:''}, {kind:'load', to: stg, from: at, lading: p.ships || ''} ];
+}
+function dealFor(t){
+  var ps = shuffle(takers(t).slice());
+  if(!ps.length) return null;
+  var a = ps[0], b = ps[1] || ps[0];
+  var b1 = blankBill(t); b1.cy = half(a, t).concat(half(b, t)); b1.auto = 1; return b1;
+}
+$('dealBtn').addEventListener('click', function(){
+  var cars = S.cars.filter(function(c){ return c.mark || c.num; });
+  if(!isPro()){ $('dealNote').innerHTML = 'Making waybills from your places is part of Pro. Free: add blank waybills and fill them in. <a href="#proSec">See Pro</a>'; track('pro-gate'); return; }
+  if(!cars.length){ toast('Add your cars first.'); go('cars'); return; }
+  if(!S.places.some(function(p){ return p.name && p.takes; })){ toast('Add places and the car types they take first.'); go('places'); return; }
+  if(ownCars().length) cars = cars.filter(function(c){ return !c.ex; });
+  var oldAuto = S.bills.filter(function(b){ return b.auto && !b.ex; }).length;
+  if(oldAuto && !confirm('Replace the ' + oldAuto + ' waybills made last time? Waybills you edited by hand stay.')) return;
+  S.bills = S.bills.filter(function(b){ return !(b.auto && !b.ex); });
+  var made = 0, miss = {};
+  cars.forEach(function(c){ var t = code(c.type); var b = t && dealFor(t); if(b){ S.bills.push(b); made++; } else miss[t || '(no type)'] = 1; });
+  save(); renderBills();
+  var m = Object.keys(miss);
+  $('dealNote').textContent = 'Made ' + made + ' waybill' + (made === 1 ? '' : 's') + '.' + (m.length ? ' No place takes: ' + m.join(', ') + '.' : '');
+  track('deal');
+});
+
+/* ---------- print settings ---------- */
+$('paper').addEventListener('change', function(){ S.set.paper = this.value; save(); renderPrint(); });
+$('size').addEventListener('change', function(){ S.set.size = this.value; save(); renderPrint(); });
+$('style').addEventListener('change', function(){ S.set.style = this.value; save(); renderPrint(); });
+$('printCards').addEventListener('click', function(){ doPrint('cards'); });
+$('printBills').addEventListener('click', function(){ doPrint('bills'); });
+$('pvCards').addEventListener('click', function(){ pvKind = 'cards'; renderPreview(); });
+$('pvBills').addEventListener('click', function(){ pvKind = 'bills'; renderPreview(); });
+
+/* ---------- example ---------- */
+var EXAMPLE = {
+  rr: 'Mill Creek Branch', staging: 'Staging',
+  cars: [
+    {mark:'ATSF', num:'34821', type:'XM', desc:"40' boxcar, mineral red", home:'Staging'},
+    {mark:'NP',   num:'27705', type:'XM', desc:"40' boxcar, brown", home:'Staging'},
+    {mark:'GATX', num:'4410',  type:'TM', desc:'8,000 gal tank, black', home:'Staging'},
+    {mark:'PFE',  num:'91234', type:'RS', desc:"40' ice reefer, orange", home:'Staging'},
+    {mark:'CB&Q', num:'184020',type:'LO', desc:'2-bay covered hopper, gray', home:'Staging'},
+    {mark:'SP',   num:'65031', type:'GB', desc:"52' gondola, brown", home:'Staging'}
+  ],
+  places: [
+    {name:'Acme Feed & Seed', town:'Millbrook', takes:'XM, LO', gets:'Feed', ships:''},
+    {name:'Valley Co-op Elevator', town:'Millbrook', takes:'XM, LO', gets:'', ships:'Wheat'},
+    {name:'Harlan Oil', town:'Cedar Bend', takes:'TM', gets:'Fuel oil', ships:''},
+    {name:'Cedar Bend Packing', town:'Cedar Bend', takes:'RS', gets:'', ships:'Apples'},
+    {name:'Kessler Scrap', town:'Cedar Bend', takes:'GB', gets:'', ships:'Scrap steel'},
+    {name:'Millbrook Lumber', town:'Millbrook', takes:'XM, GB', gets:'Lumber', ships:''}
+  ]
+};
+var EXAMPLE_BILL = {id:'wex', type:'TM', cy:[
+  {kind:'load', to:'Harlan Oil, Cedar Bend', from:'Staging', lading:'Fuel oil'}, {kind:'empty', to:'Staging', from:'', lading:''},
+  {kind:'load', to:'Harlan Oil, Cedar Bend', from:'Staging', lading:'Fuel oil'}, {kind:'empty', to:'Staging', from:'', lading:''}]};
+function loadExample(){
+  if(S.cars.some(function(c){ return c.ex; })){ go('print'); toast('The example is already loaded.'); return; }
+  if(ownCars().length && !confirm('Add the example cars and places next to yours? You can remove them later in one click.')) return;
+  if(!S.rr) S.rr = EXAMPLE.rr;
+  EXAMPLE.cars.forEach(function(c){ S.cars.push(Object.assign({id: uid('c'), note:'', photo:'', ex:1}, c)); });
+  EXAMPLE.places.forEach(function(p){ S.places.push(Object.assign({id: uid('p'), ex:1}, p)); });
+  /* example waybills are made the same way Pro makes them, so people see real output */
+  EXAMPLE.cars.forEach(function(c){ var b = dealFor(code(c.type)); if(b){ b.ex = 1; S.bills.push(b); } });
+  save(); $('rrName').value = S.rr; renderCars(); renderPlaces(); renderBills(); rack();
+  track('example'); go('print');
+  toast('Example loaded. This is the first sheet; press Print to try it.');
+}
+function clearExample(){
+  S.cars = S.cars.filter(function(c){ return !c.ex; });
+  S.places = S.places.filter(function(p){ return !p.ex; });
+  S.bills = S.bills.filter(function(b){ return !b.ex; });
+  if(S.rr === EXAMPLE.rr && !ownCars().length) S.rr = '';
+  save(); $('rrName').value = S.rr; renderCars(); renderPlaces(); renderBills(); rack();
+}
+$('exBtn').addEventListener('click', loadExample);
+
+/* ---------- backup ---------- */
+$('saveBarBackup').addEventListener('click', function(){ $('backupBtn').click(); });
+$('backupBtn').addEventListener('click', function(){
+  var blob = new Blob([JSON.stringify(S)], {type:'application/json'});
+  var a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = 'car-card-press-' + (S.rr || 'roster').replace(/[^A-Za-z0-9]+/g, '-').toLowerCase() + '.json';
+  document.body.appendChild(a); a.click(); setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 500);
+  track('backup');
+});
+$('restoreBtn').addEventListener('click', function(){ $('restoreFile').value = ''; $('restoreFile').click(); });
+$('restoreFile').addEventListener('change', function(){
+  var f = this.files && this.files[0]; if(!f) return;
+  var r = new FileReader();
+  r.onload = function(){
+    try{ var o = JSON.parse(r.result); if(!o || o.v !== 1 || !Array.isArray(o.cars)) throw 0;
+      if((S.cars.length || S.bills.length || S.places.length) && !confirm('Replace what is here now with the backup?')) return;
+      S = Object.assign(blank(), o); S.set = Object.assign(blank().set, o.set || {}); clean(); save(); renderAll(); toast('Backup loaded.');
+    }catch(e){ toast('That file is not a Car Card Press backup.'); }
+  };
+  r.readAsText(f);
+});
+
+/* ---------- Pro ---------- */
+function buyUrl(){
+  var a = ''; try{ a = (new URLSearchParams(location.search).get('a') || '').replace(/[^A-Za-z0-9_-]/g, '').slice(0, 40); if(a) localStorage.setItem('ccp.aff', a); else a = localStorage.getItem('ccp.aff') || ''; }catch(e){}
+  if(a && CHECKOUT_PLAN) return 'https://whop.com/checkout/' + CHECKOUT_PLAN + '?a=' + encodeURIComponent(a);
+  return CHECKOUT_REDIRECT;
+}
+function sha256hex(s){
+  return crypto.subtle.digest('SHA-256', new TextEncoder().encode(s)).then(function(buf){
+    return Array.prototype.map.call(new Uint8Array(buf), function(x){ return ('0' + x.toString(16)).slice(-2); }).join('');
+  });
+}
+function checkGift(code){
+  var norm = String(code || '').trim().toUpperCase().replace(/\s+/g, '');
+  if(!norm || !window.crypto || !crypto.subtle) return Promise.resolve(false);
+  return sha256hex(norm).then(function(hex){ return GIFT_SHA256.indexOf(hex) >= 0; });
+}
+function verifyLicense(email){
+  var ac = window.AbortController ? new AbortController() : null; if(ac) setTimeout(function(){ ac.abort(); }, 10000);
+  return fetch(VERIFY_URL, {method:'POST', headers:{'content-type':'application/json'}, body: JSON.stringify({app: APP_KEY, email: email}), signal: ac ? ac.signal : undefined})
+    .then(function(r){ return r.json(); })
+    .then(function(j){ if(j && j.ok) return j; throw new Error('check failed'); });
+}
+function renderPro(){
+  var el = $('proBody');
+  $('proPill').textContent = isPro() ? 'Pro ✓' : 'Pro';
+  if(isPro()){
+    el.innerHTML = '<p>Pro is on for this browser. Photos, the waybill maker and any number of cars are unlocked. Thanks for backing a small tool.</p>';
+    return;
+  }
+  var buy = (PRICE && buyUrl()) ? '<a class="btn go" id="buyBtn" href="' + esc(buyUrl()) + '" target="_blank" rel="noopener">Get Pro · ' + esc(PRICE) + ' once</a>' : '';
+  el.innerHTML = '<ul>'
+    + '<li>Print cards for your whole roster (free prints ' + FREE_CARS + ' cars)</li>'
+    + '<li>A photo of each car on its card, straight from your phone</li>'
+    + '<li>The waybill maker: one press gives every car a 4-move waybill from your places</li>'
+    + '<li>No credit line on your sheets</li></ul>'
+    + '<div class="row">' + buy + '</div>'
+    + '<p style="margin:14px 0 6px">Already bought, or got a code from Sam? Enter the email you paid with, or the code.</p>'
+    + '<div class="row"><input type="text" id="licKey" placeholder="Email or code" autocomplete="email" aria-label="Email or code"><button class="btn" id="licGo">Unlock Pro</button></div>'
+    + '<div class="msg" id="licNote" role="status"></div>';
+  var bb = $('buyBtn'); if(bb) bb.addEventListener('click', function(){ track('buy-click'); });
+  $('licGo').addEventListener('click', unlock);
+  $('licKey').addEventListener('keydown', function(e){ if(e.key === 'Enter') unlock(); });
+}
+var unlocking = false;
+function unlock(){
+  var v = ($('licKey').value || '').trim(), note = $('licNote');
+  if(!v){ note.textContent = 'Enter your email or code.'; return; }
+  if(unlocking) return; unlocking = true; $('licGo').disabled = true;
+  note.textContent = 'Checking…';
+  checkGift(v).then(function(ok){
+    if(ok){ PRO = {key: v.toUpperCase(), kind:'gift'}; savePro(); track('gift-unlock'); track('gift-' + (v.toUpperCase().split('-')[1] || 'x').toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 12)); track('pro-unlocked'); renderAll(); toast('Pro unlocked. Enjoy.'); return; }
+    if(v.indexOf('@') < 0){ note.textContent = 'That code was not recognised. Check it, or enter the email you paid with.'; return; }
+    return verifyLicense(v).then(function(j){
+      if(j.valid){ PRO = {key: v.toLowerCase(), kind:'paid'}; savePro(); track('pro-unlocked'); renderAll(); toast('Pro unlocked. Thank you!'); }
+      else note.textContent = 'No purchase found for that email. Use the email from your Whop receipt.';
+    });
+  }).catch(function(){ note.textContent = 'Could not check right now. Try again in a minute.'; })
+    .then(function(){ unlocking = false; var g = $('licGo'); if(g) g.disabled = false; });
+}
+
+/* ---------- start ---------- */
+function renderAll(){ $('rrName').value = S.rr; renderCars(); renderPlaces(); renderBills(); renderPro(); rack(); if(!$('pane-print').hidden) renderPrint(); }
+load(); loadPro(); renderAll();
+window.addEventListener('storage', function(e){
+  if(e.key === KEY){ load(); renderAll(); }
+  if(e.key === 'ccp.pro'){ loadPro(); renderAll(); }
+});
+/* pro-seen: the Pro box stayed on screen 2 s after the visitor scrolled or clicked something (not just a tall screen at load) */
+var proSeen = false, acted = false, proTimer = 0;
+['scroll','click','keydown'].forEach(function(ev){ addEventListener(ev, function(){ acted = true; }, {passive:true, once:true}); });
+if('IntersectionObserver' in window){ new IntersectionObserver(function(es){ es.forEach(function(e){
+  clearTimeout(proTimer);
+  if(e.isIntersecting && !proSeen) proTimer = setTimeout(function(){ if(acted && !proSeen){ proSeen = true; track('pro-seen'); } }, 2000);
+}); }, {threshold:.5}).observe($('proSec')); }
+if(document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ rack(); });
+
+if(GC_CODE){ var gs = document.createElement('script'); gs.async = true; gs.src = '//gc.zgo.at/count.js'; gs.setAttribute('data-goatcounter', 'https://' + GC_CODE + '.goatcounter.com/count'); document.head.appendChild(gs); }
+(function(){
+  var q = new URLSearchParams(location.search);
+  var via = cleanVia(q.get('via')), af = (q.get('a') || '').replace(/[^A-Za-z0-9_-]/g, '').slice(0, 40);
+  var seen = ''; try{ seen = sessionStorage.getItem('ccp.seen') || ''; sessionStorage.setItem('ccp.seen', via + '|' + af); }catch(e){}
+  if(seen !== via + '|' + af){ if(via) track('via-' + via); if(af) track('aff-' + af); }   /* a reload is not a new visit */
+  if(q.get('bought') === '1') track('bought-return');
+  /* measurement check from a real browser: ?via=selftest&fire=all sends every funnel event once, only as "<event>.selftest",
+     so the plain counts stay clean (GoatCounter drops hits from our server's IP, so this is run on the laptop) */
+  if(via === 'selftest' && q.get('fire') === 'all'){ Object.keys(FUNNEL_EV).forEach(function(n, i){ setTimeout(function(){ track(n + '.selftest', 1); }, 300 * i); }); track('gift-selftest'); }
+  if(q.get('bought') === '1' && !isPro()){
+    setTimeout(function(){ $('proSec').scrollIntoView(); var n = $('licNote'), k = $('licKey'); if(n) n.textContent = 'Thanks! Enter the email you just used on Whop and press Unlock Pro.'; if(k) k.focus(); }, 300);
+  }
+})();
+</script>
+</body>
+</html>
